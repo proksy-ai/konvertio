@@ -1,0 +1,12 @@
+services:
+  konvertio:
+    build: .
+    image: konvertio:latest
+    ports:
+      - "8000:8000"
+    environment:
+      # Max upload size in megabytes.
+      KONVERTIO_MAX_UPLOAD_MB: "50"
+      # Set to "false" to disable converting remote URLs.
+      KONVERTIO_ALLOW_URL_FETCH: "true"
+    restart: unless-stopped

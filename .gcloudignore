@@ -1,0 +1,20 @@
+# Files not uploaded to Cloud Build when deploying from source.
+.git
+.gitignore
+.github
+.venv
+venv
+env
+__pycache__
+*.pyc
+*.egg-info
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.DS_Store
+*.log
+docs
+connectors
+README.md
+render.yaml
+docker-compose.yml

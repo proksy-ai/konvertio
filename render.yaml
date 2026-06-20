@@ -1,0 +1,15 @@
+# One-click deploy to Render: https://render.com/deploy
+# Push this repo to GitHub, then click "New > Blueprint" in Render and point it here.
+services:
+  - type: web
+    name: konvertio
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: KONVERTIO_MAX_UPLOAD_MB
+        value: "50"
+      - key: KONVERTIO_ALLOW_URL_FETCH
+        value: "true"

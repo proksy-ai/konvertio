@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Konvertio: Make your documents ready for AI</title>
+  <meta name="description" content="Upload a long report and get clean, simple text you can paste into ChatGPT, Claude, or any other AI tool." />
+  <link rel="icon" href="/favicon.png" type="image/png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
+            violet: { 600: '#7c3aed' },
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .drop-active { border-color: #6366f1 !important; background-color: rgba(99,102,241,0.06); transform: scale(1.005); }
+    .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .hero-bg {
+      background:
+        radial-gradient(60rem 30rem at 80% -10%, rgba(124,58,237,0.10), transparent 60%),
+        radial-gradient(50rem 28rem at 0% 0%, rgba(79,70,229,0.10), transparent 55%);
+    }
+    /* Lightweight markdown preview styling (no external typography plugin needed). */
+    .md-preview h1 { font-size: 1.35rem; font-weight: 700; margin: 1rem 0 .5rem; }
+    .md-preview h2 { font-size: 1.15rem; font-weight: 700; margin: 1rem 0 .5rem; }
+    .md-preview h3 { font-size: 1rem; font-weight: 600; margin: .85rem 0 .4rem; }
+    .md-preview p { margin: .5rem 0; line-height: 1.65; }
+    .md-preview ul, .md-preview ol { margin: .5rem 0 .5rem 1.25rem; list-style: revert; }
+    .md-preview li { margin: .2rem 0; }
+    .md-preview a { color: #4f46e5; text-decoration: underline; }
+    .md-preview code { background: #f1f5f9; padding: .1rem .3rem; border-radius: .25rem; font-size: .85em; }
+    .md-preview pre { background: #f1f5f9; padding: .75rem; border-radius: .5rem; overflow:auto; }
+    .md-preview table { border-collapse: collapse; margin: .75rem 0; width: 100%; font-size: .85rem; }
+    .md-preview th, .md-preview td { border: 1px solid #e2e8f0; padding: .4rem .6rem; text-align: left; }
+    .md-preview th { background: #f8fafc; font-weight: 600; }
+    .md-preview blockquote { border-left: 3px solid #c7d2fe; padding-left: .75rem; color: #475569; margin: .5rem 0; }
+  </style>
+</head>
+<body class="h-full bg-slate-50 text-slate-800 antialiased">
+  <div class="min-h-full flex flex-col hero-bg">
+    <!-- Header -->
+    <header class="sticky top-0 z-10 border-b border-slate-200/70 bg-white/70 backdrop-blur">
+      <div class="mx-auto max-w-5xl px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <img src="/logo.png" alt="Konvertio" class="w-10 h-10 rounded-xl shadow-sm" />
+          <div>
+            <h1 class="text-lg font-bold tracking-tight text-slate-900">Konvertio</h1>
+            <p class="text-xs text-slate-500 -mt-0.5">Make your documents ready for AI</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <span class="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 border border-green-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Private &amp; secure
+          </span>
+          <a href="https://github.com/proksy-ai/konvertio" target="_blank" rel="noopener"
+             title="View source on GitHub"
+             class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.523 2 12 2Z" />
+            </svg>
+            <span class="hidden sm:inline">GitHub</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 mx-auto w-full max-w-3xl px-4 py-10 sm:py-14">
+      <!-- Hero -->
+      <div class="text-center mb-8">
+        <img src="/mascot.png" alt="Konvi, the friendly Konvertio mascot" class="mx-auto mb-3 w-24 h-24 sm:w-28 sm:h-28" />
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+          Turn long documents into<br class="hidden sm:block" /> clean text for AI
+        </h2>
+        <p class="mt-3 text-base text-slate-500 max-w-xl mx-auto">
+          Got a big annual report, a 300-page case file, a textbook chapter, or even a novel?
+          Drop it in and Konvi hands back clean, simple text you can paste into ChatGPT, Claude,
+          or any other AI tool, without the images and clutter that eat up space.
+        </p>
+        <p class="mt-2 text-sm text-slate-400 max-w-xl mx-auto">
+          Loved by students, researchers, and finance folks for summarizing, studying, and asking questions.
+        </p>
+      </div>
+
+      <!-- 3-step strip -->
+      <div class="mb-8 grid grid-cols-3 gap-2 sm:gap-4 text-center">
+        <div class="rounded-2xl bg-white/70 border border-slate-200 px-2 py-4">
+          <div class="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 text-brand-600 font-bold">1</div>
+          <p class="text-xs sm:text-sm font-medium text-slate-700">Add your file<br />or a link</p>
+        </div>
+        <div class="rounded-2xl bg-white/70 border border-slate-200 px-2 py-4">
+          <div class="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 text-brand-600 font-bold">2</div>
+          <p class="text-xs sm:text-sm font-medium text-slate-700">We clean it<br />into text</p>
+        </div>
+        <div class="rounded-2xl bg-white/70 border border-slate-200 px-2 py-4">
+          <div class="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 text-brand-600 font-bold">3</div>
+          <p class="text-xs sm:text-sm font-medium text-slate-700">Paste into<br />your AI tool</p>
+        </div>
+      </div>
+
+      <!-- Supported file types -->
+      <div class="mb-6 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2.5">Works with</p>
+        <div class="flex flex-wrap justify-center gap-2 text-xs">
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-600">PDF</span>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-600">Word</span>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-600">Excel</span>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-600">PowerPoint</span>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-600">HTML</span>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-600">CSV</span>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-600">Text</span>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-600">EPUB books</span>
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-600">ZIP</span>
+        </div>
+      </div>
+
+      <!-- Converter card -->
+      <section class="bg-white rounded-2xl shadow-lg shadow-slate-200/60 border border-slate-200 p-5 sm:p-7">
+        <!-- Drop zone -->
+        <label id="dropzone"
+          class="group block cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 px-6 py-12 text-center transition-all hover:border-brand-400 hover:bg-brand-50/40">
+          <input id="fileInput" type="file" class="hidden"
+            accept=".pdf,.docx,.doc,.pptx,.ppt,.xlsx,.xls,.csv,.tsv,.json,.xml,.html,.htm,.txt,.md,.markdown,.rtf,.epub,.zip,.msg,.ipynb" />
+          <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 group-hover:scale-105 transition">
+            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+            </svg>
+          </div>
+          <p class="text-base font-semibold text-slate-800">
+            <span class="text-brand-600">Click to choose a file</span> or drag it here
+          </p>
+          <p id="fileName" class="mt-1 text-sm text-slate-400">PDF, Word, Excel, PowerPoint and more. Up to 25 MB.</p>
+        </label>
+
+        <!-- Divider -->
+        <div id="orDivider" class="my-5 flex items-center gap-3 text-xs font-medium text-slate-400">
+          <div class="h-px flex-1 bg-slate-200"></div>
+          OR
+          <div class="h-px flex-1 bg-slate-200"></div>
+        </div>
+
+        <!-- URL input -->
+        <div id="urlBlock" class="flex items-center gap-2 rounded-xl border border-slate-300 px-3.5 py-2.5 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100 transition">
+          <svg class="h-4 w-4 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+          </svg>
+          <input id="urlInput" type="url" placeholder="Paste a link to a document instead"
+            class="w-full text-sm outline-none placeholder:text-slate-400" />
+        </div>
+
+        <!-- Options -->
+        <div class="mt-5 rounded-xl bg-slate-50 border border-slate-200 p-4">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2.5">Options</p>
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input id="stripImages" type="checkbox" checked class="mt-0.5 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500" />
+            <span class="text-sm">
+              <span class="font-medium text-slate-800">Remove images to save space</span>
+              <span class="block text-xs text-slate-500">Recommended. Keeps the words and takes out images that use up the AI's space.</span>
+            </span>
+          </label>
+          <label class="mt-3 flex items-start gap-3 cursor-pointer">
+            <input id="keepAlt" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500" />
+            <span class="text-sm">
+              <span class="font-medium text-slate-800">Keep image captions</span>
+              <span class="block text-xs text-slate-500">Leaves a short note where each image was.</span>
+            </span>
+          </label>
+        </div>
+
+        <!-- Action -->
+        <div class="mt-5 flex items-center gap-3">
+          <button id="convertBtn"
+            class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg id="spinner" class="hidden h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <span id="btnLabel">Convert document</span>
+          </button>
+          <button id="resetBtn" class="rounded-xl px-4 py-3 text-sm font-medium text-slate-500 hover:bg-slate-100">Clear</button>
+        </div>
+
+        <p id="error" class="hidden mt-4 rounded-xl bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-700"></p>
+      </section>
+
+      <!-- Result -->
+      <section id="result" class="hidden mt-6 bg-white rounded-2xl shadow-lg shadow-slate-200/60 border border-slate-200">
+        <div class="flex flex-col gap-3 border-b border-slate-200 px-5 py-4">
+          <div class="flex items-center gap-2 text-sm font-semibold text-slate-800">
+            <svg class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            Your text is ready
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div id="statsBadges" class="flex flex-wrap items-center gap-2 text-xs"></div>
+            <div class="flex items-center gap-2">
+              <div class="flex rounded-lg border border-slate-200 p-0.5 text-xs">
+                <button id="tabPreview" class="rounded-md px-3 py-1 font-medium">Preview</button>
+                <button id="tabRaw" class="rounded-md px-3 py-1 font-medium">Text</button>
+              </div>
+              <button id="copyBtn" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium hover:bg-slate-50">Copy</button>
+              <button id="downloadBtn" class="inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-900">Download</button>
+            </div>
+          </div>
+        </div>
+        <div class="p-5">
+          <div id="rawView" class="hidden">
+            <pre class="scrollbar-thin max-h-[28rem] overflow-auto rounded-lg bg-slate-50 p-4 text-xs leading-relaxed text-slate-800 whitespace-pre-wrap break-words"><code id="rawCode"></code></pre>
+          </div>
+          <div id="previewView" class="md-preview scrollbar-thin max-h-[28rem] overflow-auto text-sm text-slate-700"></div>
+        </div>
+      </section>
+
+      <p class="mt-8 text-center text-xs text-slate-400">
+        Your files are processed privately and are never saved. Fair-use limits apply.
+      </p>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 bg-white/70 backdrop-blur">
+      <div class="mx-auto max-w-5xl px-4 py-8">
+        <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <div class="max-w-sm">
+            <div class="flex items-center gap-2.5">
+              <img src="/logo.png" alt="" class="w-7 h-7 rounded-lg" />
+              <span class="text-base font-bold text-slate-900">Konvertio</span>
+            </div>
+            <p class="mt-2 text-sm text-slate-500">
+              Free, open-source tool that turns long documents into clean text for AI analysis.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-x-12 gap-y-6 text-sm">
+            <div>
+              <p class="font-semibold text-slate-800 mb-2">Product</p>
+              <ul class="space-y-1.5 text-slate-500">
+                <li><a href="https://github.com/proksy-ai/konvertio" target="_blank" rel="noopener" class="hover:text-brand-600">Source code</a></li>
+                <li><a href="https://github.com/proksy-ai/konvertio#readme" target="_blank" rel="noopener" class="hover:text-brand-600">Documentation</a></li>
+                <li><a href="https://github.com/proksy-ai/konvertio/issues" target="_blank" rel="noopener" class="hover:text-brand-600">Report an issue</a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-semibold text-slate-800 mb-2">Contact</p>
+              <ul class="space-y-1.5 text-slate-500">
+                <li><a href="mailto:piyush@proksy.ai" class="hover:text-brand-600">piyush@proksy.ai</a></li>
+                <li><a href="https://github.com/proksy-ai/konvertio/blob/main/LICENSE" target="_blank" rel="noopener" class="hover:text-brand-600">MIT License</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 border-t border-slate-100 pt-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+          <p>&copy; <span id="year">2026</span> Proksy Intelligence Labs. All rights reserved.</p>
+          <p>Built and maintained by <span class="font-medium text-slate-500">Proksy Intelligence Labs</span></p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const $ = (id) => document.getElementById(id);
+    const fileInput = $('fileInput');
+    const dropzone = $('dropzone');
+    const fileNameEl = $('fileName');
+    const urlInput = $('urlInput');
+    let DEFAULT_HINT = 'PDF, Word, Excel, PowerPoint and more. Up to 25 MB.';
+    let selectedFile = null;
+    let lastMarkdown = '';
+
+    function setFile(file) {
+      selectedFile = file;
+      if (file) {
+        fileNameEl.textContent = '✓ ' + file.name;
+        fileNameEl.classList.add('text-brand-600', 'font-medium');
+        urlInput.value = '';
+      } else {
+        fileNameEl.textContent = DEFAULT_HINT;
+        fileNameEl.classList.remove('text-brand-600', 'font-medium');
+      }
+    }
+
+    fileInput.addEventListener('change', (e) => setFile(e.target.files[0] || null));
+    urlInput.addEventListener('input', () => { if (urlInput.value) setFile(null); });
+
+    function loadAnalytics(id) {
+      if (!id) return;
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', id);
+    }
+
+    // Adapt the UI to server settings (e.g. hide the link option if turned off).
+    fetch('/config')
+      .then((r) => r.json())
+      .then((cfg) => {
+        if (cfg && cfg.allow_url_fetch === false) {
+          $('orDivider').classList.add('hidden');
+          $('urlBlock').classList.add('hidden');
+        }
+        if (cfg && cfg.max_upload_mb) {
+          DEFAULT_HINT = `PDF, Word, Excel, PowerPoint and more. Up to ${cfg.max_upload_mb} MB.`;
+          if (!selectedFile) fileNameEl.textContent = DEFAULT_HINT;
+        }
+        if (cfg && cfg.ga_measurement_id) loadAnalytics(cfg.ga_measurement_id);
+      })
+      .catch(() => {});
+
+    // Track a conversion event in GA4 (no document content is sent).
+    function trackConversion(stats) {
+      if (window.gtag) {
+        window.gtag('event', 'convert_document', {
+          images_removed: stats.images_removed || 0,
+          tokens_after: stats.tokens_after || 0,
+        });
+      }
+    }
+
+    ['dragenter', 'dragover'].forEach((evt) =>
+      dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.add('drop-active'); }));
+    ['dragleave', 'drop'].forEach((evt) =>
+      dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.remove('drop-active'); }));
+    dropzone.addEventListener('drop', (e) => {
+      const file = e.dataTransfer.files[0];
+      if (file) { fileInput.files = e.dataTransfer.files; setFile(file); }
+    });
+
+    function showError(msg) {
+      const el = $('error');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+    function clearError() { $('error').classList.add('hidden'); }
+
+    function setLoading(loading) {
+      $('convertBtn').disabled = loading;
+      $('spinner').classList.toggle('hidden', !loading);
+      $('btnLabel').textContent = loading ? 'Converting…' : 'Convert document';
+    }
+
+    function fmt(n) { return n.toLocaleString(); }
+
+    function badge(text, tone) {
+      const tones = {
+        green: 'bg-green-50 text-green-700 border-green-200',
+        slate: 'bg-slate-50 text-slate-600 border-slate-200',
+        indigo: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+      };
+      return `<span class="rounded-full border px-2.5 py-1 font-medium ${tones[tone] || tones.slate}">${text}</span>`;
+    }
+
+    function renderStats(stats) {
+      const tokens = stats.tokens_after || 0;
+      const parts = [badge(`~${fmt(tokens)} tokens`, 'indigo')];
+      const before = stats.chars_before || 0;
+      const saved = Math.max(before - (stats.chars_after || 0), 0);
+      const pct = before > 0 ? Math.round((saved / before) * 100) : 0;
+      if (pct > 0) parts.push(badge(`${pct}% smaller`, 'green'));
+      if (stats.images_removed > 0) {
+        const label = stats.images_removed === 1 ? '1 image removed' : `${fmt(stats.images_removed)} images removed`;
+        parts.push(badge(label, 'slate'));
+      }
+      $('statsBadges').innerHTML = parts.join('');
+    }
+
+    function showResult(data) {
+      lastMarkdown = data.markdown;
+      renderStats(data.stats);
+      trackConversion(data.stats);
+      $('rawCode').textContent = data.markdown;
+      $('previewView').innerHTML = marked.parse(data.markdown);
+      $('result').classList.remove('hidden');
+      switchTab('preview');
+      $('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function switchTab(which) {
+      const preview = which === 'preview';
+      $('previewView').classList.toggle('hidden', !preview);
+      $('rawView').classList.toggle('hidden', preview);
+      $('tabPreview').className = 'rounded-md px-3 py-1 font-medium ' + (preview ? 'bg-brand-600 text-white' : 'text-slate-600');
+      $('tabRaw').className = 'rounded-md px-3 py-1 font-medium ' + (!preview ? 'bg-brand-600 text-white' : 'text-slate-600');
+    }
+
+    $('tabPreview').addEventListener('click', () => switchTab('preview'));
+    $('tabRaw').addEventListener('click', () => switchTab('raw'));
+
+    $('copyBtn').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(lastMarkdown);
+      const btn = $('copyBtn');
+      const original = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => (btn.textContent = original), 1500);
+    });
+
+    $('downloadBtn').addEventListener('click', () => {
+      const blob = new Blob([lastMarkdown], { type: 'text/markdown' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      const base = (selectedFile?.name || 'document').replace(/\.[^.]+$/, '');
+      a.download = `${base}.md`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    $('resetBtn').addEventListener('click', () => {
+      setFile(null);
+      fileInput.value = '';
+      urlInput.value = '';
+      lastMarkdown = '';
+      clearError();
+      $('result').classList.add('hidden');
+    });
+
+    $('convertBtn').addEventListener('click', async () => {
+      clearError();
+      const url = urlInput.value.trim();
+      if (!selectedFile && !url) {
+        showError('Please choose a file or paste a document link first.');
+        return;
+      }
+      const form = new FormData();
+      if (selectedFile) form.append('file', selectedFile);
+      else form.append('url', url);
+      form.append('strip_images', $('stripImages').checked);
+      form.append('keep_alt_text', $('keepAlt').checked);
+
+      setLoading(true);
+      try {
+        const res = await fetch('/convert', { method: 'POST', body: form });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Conversion failed.');
+        showResult(data);
+      } catch (err) {
+        showError(err.message || String(err));
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+</body>
+</html>

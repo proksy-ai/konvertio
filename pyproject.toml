@@ -1,0 +1,42 @@
+[project]
+name = "konvertio"
+version = "0.1.0"
+description = "Privacy-first document-to-Markdown converter for AI financial analysis. Wraps Microsoft markitdown with image stripping and token stats."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Proksy Intelligence Labs", email = "piyush@proksy.ai" }]
+maintainers = [{ name = "Proksy Intelligence Labs", email = "piyush@proksy.ai" }]
+keywords = ["markdown", "markitdown", "llm", "pdf", "docx", "converter", "mcp"]
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "python-multipart>=0.0.9",
+    "markitdown[all]>=0.1.1",
+    "mcp>=1.2.0",
+    "slowapi>=0.1.9",
+    "hypercorn>=0.17",
+]
+
+[project.urls]
+Homepage = "https://konvertio-812098809765.asia-south1.run.app"
+Source = "https://github.com/proksy-ai/konvertio"
+Issues = "https://github.com/proksy-ai/konvertio/issues"
+
+[project.scripts]
+konvertio = "app.main:run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

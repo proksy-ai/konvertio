@@ -1,0 +1,70 @@
+openapi: 3.1.0
+info:
+  title: Konvertio
+  description: >-
+    Convert a long document (PDF, Word, Excel, PowerPoint, HTML, and more) at a
+    public URL into clean, text-first Markdown. Strips images and base64 data so
+    the document fits inside model context and embedding limits.
+  version: 0.1.0
+servers:
+  # Replace with the public URL of your hosted Konvertio instance.
+  - url: https://YOUR-KONVERTIO-HOST
+paths:
+  /convert/url:
+    post:
+      operationId: convertDocumentUrl
+      summary: Convert a document at a URL to clean Markdown
+      description: >-
+        Fetches the document at the given URL and returns clean Markdown plus
+        token statistics. Use this whenever the user shares a link to a report,
+        filing, or document they want analyzed as text.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConvertUrlRequest"
+      responses:
+        "200":
+          description: Successful conversion
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConvertResult"
+        "422":
+          description: The document could not be converted
+components:
+  schemas:
+    ConvertUrlRequest:
+      type: object
+      required: [url]
+      properties:
+        url:
+          type: string
+          description: Public http(s) URL of the document to convert.
+        strip_images:
+          type: boolean
+          default: true
+          description: Remove images and base64 data URIs from the output.
+        keep_alt_text:
+          type: boolean
+          default: false
+          description: Keep image captions as short "[image: ...]" placeholders.
+    ConvertResult:
+      type: object
+      properties:
+        markdown:
+          type: string
+          description: The converted, cleaned Markdown.
+        title:
+          type: string
+          nullable: true
+        stats:
+          type: object
+          properties:
+            images_removed: { type: integer }
+            chars_before: { type: integer }
+            chars_after: { type: integer }
+            tokens_before: { type: integer }
+            tokens_after: { type: integer }
+            tokens_saved: { type: integer }
