@@ -1,0 +1,55 @@
+name: Bug report
+description: Something isn't working as expected
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report a bug! Please fill in the details below.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+      placeholder: When I upload a PDF, the result is empty...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce it?
+      placeholder: |
+        1. Open the app
+        2. Upload '...'
+        3. Click Convert
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: input
+    id: file-type
+    attributes:
+      label: File type
+      description: What kind of document were you converting (PDF, DOCX, XLSX, ...)? Do NOT upload sensitive files here.
+      placeholder: PDF
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where did this happen?
+      options:
+        - The hosted app
+        - A self-hosted instance (Docker / Cloud Run / etc.)
+        - Local development
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Browser, screenshots, error messages, anything else helpful.
