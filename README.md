@@ -45,8 +45,7 @@ its context and embedding limits.
 No coding required: a non-technical user just opens the web app, drops in a file, and
 copies the clean text.
 
-It is a friendly, hosted, rate-limited wrapper around Microsoft's excellent
-[MarkItDown](https://github.com/microsoft/markitdown) conversion engine.
+Free to use, hosted with fair-use rate limits so it stays available for everyone.
 
 ## Features
 
@@ -166,7 +165,7 @@ curl -F "file=@report.pdf" -F "strip_images=true" \
 
 ```
 app/
-  core.py        # Conversion engine (markitdown) + image/data-URI stripping + stats
+  core.py        # Conversion engine + image/data-URI stripping + stats
   main.py        # FastAPI app: REST API, static UI, mounted MCP connector
   ratelimit.py   # Per-IP rate limiting (slowapi)
   mcp_server.py  # MCP tool: convert_to_markdown (for Claude and other MCP clients)
@@ -200,8 +199,7 @@ Found a vulnerability? Please **do not** open a public issue. See our
 
 ## License
 
-Released under the [MIT License](LICENSE). Built on
-[Microsoft MarkItDown](https://github.com/microsoft/markitdown) (also MIT).
+Released under the [MIT License](LICENSE).
 
 ---
 

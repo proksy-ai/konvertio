@@ -24,9 +24,9 @@ A few things that are important to understand about how Konvertio handles data:
 
 - **No persistence:** uploaded files are processed entirely in memory and are
   never written to disk or logged.
-- **Conversion privileges:** the underlying engine ([MarkItDown](https://github.com/microsoft/markitdown))
-  reads with the privileges of the server process. On public deployments we
-  recommend running in a container (as our Docker image does) and **disabling URL
+- **Conversion privileges:** the document conversion engine reads with the
+  privileges of the server process. On public deployments we recommend running
+  in a container (as our Docker image does) and **disabling URL fetching**
   fetching** (`KONVERTIO_ALLOW_URL_FETCH=false`) to avoid server-side request
   forgery (SSRF) against internal resources.
 - **Rate limiting:** the conversion endpoints are rate-limited per IP to reduce

@@ -79,7 +79,7 @@ fix: handle empty PDF pages without crashing
 docs: clarify Cloud Run cost section
 refactor: extract image stripper into helper
 test: add cases for reference-style images
-chore: bump markitdown to 0.1.2
+chore: bump document conversion dependencies
 ```
 
 Reference issues where relevant, e.g. `fix: reject oversized uploads (#42)`.

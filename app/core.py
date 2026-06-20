@@ -1,4 +1,4 @@
-"""Conversion core: wrap markitdown and post-process for AI-friendly Markdown.
+"""Conversion core: document-to-Markdown conversion and post-processing for AI-friendly output.
 
 This module is transport-agnostic so it can be reused by the web API and the
 MCP connector. It never writes uploaded content to disk and never logs it.

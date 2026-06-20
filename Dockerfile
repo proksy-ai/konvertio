@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 
-# System deps some markitdown extractors benefit from (e.g. PDF/zip handling).
+# System deps for PDF and archive handling during conversion.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ffmpeg \

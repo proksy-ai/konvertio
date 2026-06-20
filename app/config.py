@@ -44,7 +44,7 @@ RATE_LIMIT_CONVERT = os.getenv("KONVERTIO_RATE_LIMIT_CONVERT", "10/minute;200/da
 # A looser global default applied to every request.
 RATE_LIMIT_DEFAULT = os.getenv("KONVERTIO_RATE_LIMIT_DEFAULT", "60/minute;1000/day")
 
-# File extensions markitdown can meaningfully handle. Used for early rejection
+# File extensions the converter can handle. Used for early rejection
 # and a friendlier error than a deep stack trace.
 ALLOWED_EXTENSIONS = {
     ".pdf",

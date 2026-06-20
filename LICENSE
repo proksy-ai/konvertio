@@ -22,5 +22,5 @@ SOFTWARE.
 
 ---
 
-This project builds on Microsoft MarkItDown (https://github.com/microsoft/markitdown),
-which is licensed under the MIT License, Copyright (c) Microsoft Corporation.
+This project uses third-party open-source libraries. See `requirements.txt` for the
+full dependency list and their respective licenses.
