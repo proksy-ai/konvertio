@@ -55,8 +55,11 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # Mounted Starlette sub-apps don't get their lifespan run automatically,
-    # so we drive the MCP session manager here.
-    async with mcp.session_manager.run():
+    # so we drive the MCP session manager here when the connector is enabled.
+    if config.MCP_ENABLED:
+        async with mcp.session_manager.run():
+            yield
+    else:
         yield
 
 
@@ -238,9 +241,10 @@ def convert_url_json(request: Request, req: ConvertUrlRequest) -> JSONResponse:
     return _convert_url(req.url, options)
 
 
-# Mount the MCP connector (Streamable HTTP) so Claude and other MCP clients can
-# call Konvertio directly. Available at /mcp.
-app.mount("/mcp-server", mcp_app)
+# MCP connector (Streamable HTTP) for Claude and other MCP clients. Off by default
+# on public deployments; set KONVERTIO_MCP_ENABLED=true to expose /mcp-server.
+if config.MCP_ENABLED:
+    app.mount("/mcp-server", mcp_app)
 
 
 # Serve the single-page UI at the root. Mounted last so API routes win.

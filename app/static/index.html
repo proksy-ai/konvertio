@@ -101,7 +101,7 @@
       <div class="mb-8 grid grid-cols-3 gap-2 sm:gap-4 text-center">
         <div class="rounded-2xl bg-white/70 border border-slate-200 px-2 py-4">
           <div class="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 text-brand-600 font-bold">1</div>
-          <p class="text-xs sm:text-sm font-medium text-slate-700">Add your file<br />or a link</p>
+          <p id="step1Text" class="text-xs sm:text-sm font-medium text-slate-700">Add your file</p>
         </div>
         <div class="rounded-2xl bg-white/70 border border-slate-200 px-2 py-4">
           <div class="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 text-brand-600 font-bold">2</div>
@@ -318,6 +318,9 @@
         if (cfg && cfg.allow_url_fetch === false) {
           $('orDivider').classList.add('hidden');
           $('urlBlock').classList.add('hidden');
+          $('step1Text').innerHTML = 'Add your file';
+        } else {
+          $('step1Text').innerHTML = 'Add your file<br />or a link';
         }
         if (cfg && cfg.max_upload_mb) {
           DEFAULT_HINT = `PDF, Word, Excel, PowerPoint and more. Up to ${cfg.max_upload_mb} MB.`;

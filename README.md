@@ -124,6 +124,7 @@ All settings are environment variables:
 | `KONVERTIO_RATE_LIMIT_CONVERT` | `10/minute;200/day` | Limit on the conversion endpoints (per IP). |
 | `KONVERTIO_RATE_LIMIT_DEFAULT` | `60/minute;1000/day` | Global limit on all requests (per IP). |
 | `KONVERTIO_GA_MEASUREMENT_ID` | _(empty)_ | Optional Google Analytics 4 ID (e.g. `G-XXXXXXXXXX`). When set, the UI loads the GA4 tag. |
+| `KONVERTIO_MCP_ENABLED` | `false` | Expose the MCP connector at `/mcp-server` (keep off on public hosts). |
 | `PORT` | `8000` | Port to listen on (Cloud Run sets this automatically). |
 
 ## Rate limits
@@ -138,6 +139,13 @@ Exceeding a limit returns HTTP `429` with a friendly message. If you need higher
 limits, [run your own instance](#run-it-yourself) and adjust the values above. For
 strict global limits across multiple instances, back the limiter with Redis (see
 [`app/ratelimit.py`](app/ratelimit.py)).
+
+## Analytics
+
+- **Visitors (GA4):** set `KONVERTIO_GA_MEASUREMENT_ID` and redeploy. Step-by-step
+  setup is in [`deploy/google-cloud/analytics.md`](deploy/google-cloud/analytics.md).
+- **Usage on Google Cloud:** Cloud Run **Metrics** (requests, latency) and
+  **Logs Explorer** (`conversion_ok` lines) — same guide.
 
 ## API
 

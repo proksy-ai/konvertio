@@ -7,54 +7,72 @@ month** — easily covered by Google Cloud / YC student credits.
 You only need to do this once. After that, re-running the deploy command ships
 updates.
 
-## What you'll need to give me / have ready
+## What you'll need
 
-1. A Google account with **Google Cloud credits applied** (from YC Startup
-   School).
-2. A **Google Cloud project** — create one at
-   <https://console.cloud.google.com/projectcreate> and note its **Project ID**
-   (e.g. `konvertio-prod`).
-3. The [`gcloud` CLI](https://cloud.google.com/sdk/docs/install) installed, and
-   you've run `gcloud auth login` once.
-
-That's everything. No servers, Docker, or DevOps knowledge required.
+1. A Google account with **Google Cloud credits** applied.
+2. A **Google Cloud project** (e.g. `konvertio`) with billing enabled.
+3. The [`gcloud` CLI](https://cloud.google.com/sdk/docs/install) installed and
+   `gcloud auth login` completed.
 
 ## Deploy in one command
 
 From the project root:
 
 ```bash
-PROJECT_ID=your-project-id ./deploy/google-cloud/deploy.sh
+PROJECT_ID=konvertio ./deploy/google-cloud/deploy.sh
 ```
 
-Pick a region closer to your users for speed, e.g. India:
+For users in India, use Mumbai:
 
 ```bash
-REGION=asia-south1 PROJECT_ID=your-project-id ./deploy/google-cloud/deploy.sh
+REGION=asia-south1 PROJECT_ID=konvertio ./deploy/google-cloud/deploy.sh
 ```
 
-The script will:
-1. Enable the needed Google APIs.
-2. Build the container from the included `Dockerfile`.
-3. Deploy it to Cloud Run with sensible defaults (1 GB RAM, scales 0→3).
-4. Print your public URL at the end.
+With Google Analytics (after you create a GA4 property):
 
-Share that URL with your users — they just open it and start converting.
+```bash
+KONVERTIO_GA_MEASUREMENT_ID=G-XXXXXXXXXX \
+  REGION=asia-south1 PROJECT_ID=konvertio \
+  ./deploy/google-cloud/deploy.sh
+```
 
-## Cost & settings
+The script enables APIs, builds the Docker image, deploys with HTTP/2 (for files
+up to 100 MB), and prints your public URL.
 
-- **Scales to zero**: you pay nothing while idle (first request after idle has a
-  ~2–4s cold start).
-- Defaults: `1Gi` memory, `1` CPU, `300s` timeout, max `3` instances.
-- Override any of them via environment variables, e.g.
-  `MEMORY=2Gi MAX_INSTANCES=5 PROJECT_ID=... ./deploy/google-cloud/deploy.sh`.
+## Default production settings
 
-## App settings
+| Setting | Value | Why |
+|---------|-------|-----|
+| Memory | 2 GiB | Large PDFs and textbooks need headroom |
+| CPU | 2 | Faster conversion for big files |
+| Timeout | 600 s | Long documents can take minutes |
+| Max upload | 100 MB | Student case files and books |
+| URL fetch | **off** | Safer on a public host |
+| MCP connector | **off** | Not exposed publicly by default |
+| HTTP/2 | on | Required for uploads &gt; 32 MB |
+| Scale | 0 → 3 instances | Cheap when idle, capped under abuse |
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `KONVERTIO_MAX_UPLOAD_MB` | `50` | Max upload size (MB). |
-| `KONVERTIO_ALLOW_URL_FETCH` | `true` | Allow converting documents by link. |
+Override via env vars when calling the script, e.g.
+`MEMORY=4Gi MAX_INSTANCES=5 PROJECT_ID=konvertio ./deploy/google-cloud/deploy.sh`.
+
+## Analytics and usage
+
+See **[analytics.md](./analytics.md)** for:
+
+- Setting up **Google Analytics 4** (visitors, geography, conversions).
+- **Cloud Run metrics** (requests, latency, memory).
+- **Logs Explorer** queries to count conversions.
+- **Billing budget** alerts.
+
+## App environment variables
+
+| Variable | Deploy default | Description |
+|----------|----------------|-------------|
+| `KONVERTIO_MAX_UPLOAD_MB` | `100` | Max upload size (MB). |
+| `KONVERTIO_ALLOW_URL_FETCH` | `false` | Allow converting by link (SSRF risk if public). |
+| `KONVERTIO_GA_MEASUREMENT_ID` | _(empty)_ | GA4 measurement ID for visitor analytics. |
+| `KONVERTIO_MCP_ENABLED` | `false` | Expose `/mcp-server` for Claude MCP clients. |
+| `KONVERTIO_RATE_LIMIT_ENABLED` | `true` | Per-IP rate limiting. |
 
 ## Optional: lock it down
 

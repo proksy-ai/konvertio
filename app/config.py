@@ -22,6 +22,15 @@ ALLOW_URL_FETCH = os.getenv("KONVERTIO_ALLOW_URL_FETCH", "true").strip().lower()
 # web UI loads the GA4 tag so visits show up in Google Analytics. Empty = off.
 GA_MEASUREMENT_ID = os.getenv("KONVERTIO_GA_MEASUREMENT_ID", "").strip()
 
+# Expose the MCP connector at /mcp-server. Turn off on public hosts (default off
+# in deploy/google-cloud/deploy.sh).
+MCP_ENABLED = os.getenv("KONVERTIO_MCP_ENABLED", "false").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
+
 # --- Rate limiting (protects the public deployment from abuse) ----------------
 # Limits are per client IP. Format follows the `limits` library syntax.
 RATE_LIMIT_ENABLED = os.getenv("KONVERTIO_RATE_LIMIT_ENABLED", "true").strip().lower() in {
